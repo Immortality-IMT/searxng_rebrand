@@ -114,7 +114,7 @@ redis.devpkg() {
     sudo_or_exit
 
     case ${DIST_ID} in
-        ubuntu|debian)
+        ubuntu|debian|linuxmint)
             pkg_install git build-essential gawk
             ;;
         arch)
