@@ -1,5 +1,5 @@
 # Donate
 
-## Donate to Tiekoetter.com
+## Donate to url.com
 
-Support Tiekoetter.com: [https://www.tiekoetter.com/en/donate](https://www.tiekoetter.com/en/donate/)
+Support url.com: [https://www.url.com/en/donate](https://www.url.com/en/donate/)
