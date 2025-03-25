@@ -482,6 +482,10 @@ class Preferences:
             # fmt: on
         }
 
+        self.key_value_settings['custom_text'] = StringSetting(
+            '', locked=is_locked('custom_text')
+        )
+
         self.engines = EnginesSetting('engines', engines=engines.values())
         self.plugins = PluginsSetting('plugins', plugins=plugins)
         self.tokens = SetSetting('tokens')

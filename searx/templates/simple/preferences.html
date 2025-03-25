@@ -251,6 +251,14 @@
     {{- tab_header('maintab', 'cookies', _('Cookies')) -}}
     {%- include 'simple/preferences/cookies.html' -%}
     {{- tab_footer() -}}
+
+    {# tab: quicklinks #}
+
+    {{- tab_header('maintab', 'quicklinks', _('Quick Links')) -}}
+    {%- include 'simple/preferences/quicklinks.html' -%}
+    {{- tab_footer() -}}
+
+
     {{- tabs_close() -}}
 
     {# footer with save & reset buttons #}

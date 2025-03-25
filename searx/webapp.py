@@ -12,6 +12,8 @@ import json
 import os
 import sys
 import base64
+import re
+from flask import request
 
 from timeit import default_timer
 from html import escape
@@ -391,6 +393,8 @@ def render(template_name: str, **kwargs):
     kwargs['categories'] = get_enabled_categories(settings['categories_as_tabs'].keys())
     kwargs['DEFAULT_CATEGORY'] = DEFAULT_CATEGORY
 
+    kwargs['custom_text'] = sxng_request.preferences.get_value('custom_text')
+
     # i18n
     kwargs['sxng_locales'] = [l for l in sxng_locales if l[0] in settings['search']['languages']]
 
@@ -438,6 +442,7 @@ def render(template_name: str, **kwargs):
         )
     )
     kwargs['urlparse'] = urlparse
+    kwargs['custom_text'] = request.preferences.get_value('custom_text')
 
     start_time = default_timer()
     result = render_template('{}/{}'.format(kwargs['theme'], template_name), **kwargs)
@@ -568,6 +573,32 @@ def index_error(output_format: str, error_message: str):
         # fmt: on
     )
 
+def get_most_visited_sites(request, limit=50):
+    sites = []
+    custom_text = request.preferences.get_value('custom_text')
+    print(f"Cookie value: {custom_text}")  # Debugging: check the cookie value
+
+    if custom_text:
+        # Split the cookie value by newlines instead of commas
+        for entry in custom_text.splitlines():
+            parts = entry.strip().split('|')
+            if len(parts) == 3:
+                sites.append({
+                    "url": parts[0],
+                    "title": parts[1],
+                    "favicon": parts[2]
+                })
+
+    print(f"Parsed sites: {sites}")  # Debugging: check the parsed list
+    return sites[:limit]
+
+
+
+def add_new_site(url, title):
+    file_path = os.path.join(os.path.dirname(__file__), 'most_visited_sites.txt')
+    favicon = f"{url}/favicon.ico"
+    with open(file_path, 'a') as file:
+        file.write(f"{url}|{title}|{favicon}\n")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -577,12 +608,21 @@ def index():
     if sxng_request.form.get('q'):
         query = ('?' + sxng_request.query_string.decode()) if sxng_request.query_string else ''
         return redirect(url_for('search') + query, 308)
+    
+    if request.method == 'POST':
+        new_url = request.form.get('new_url')
+        new_title = request.form.get('new_title')
+        if new_url and new_title:
+            add_new_site(new_url, new_title)
 
+    most_visited_sites = get_most_visited_sites(request, limit=50)    
+    
     return render(
         # fmt: off
         'index.html',
         selected_categories=get_selected_categories(sxng_request.preferences, sxng_request.form),
         current_locale = sxng_request.preferences.get_value("locale"),
+        most_visited_sites=most_visited_sites
         # fmt: on
     )
 

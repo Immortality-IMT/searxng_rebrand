@@ -4,5 +4,18 @@
 <div class="index">
     <div class="title"><h1>SearXNG</h1></div>
     {% include 'simple/simple_search.html' %}
+
+    {% if most_visited_sites %}
+    <div class="top-sites">
+        <div class="site-grid" style="margin-top: 33px; max-width: 60%; margin-left: auto; margin-right: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 5px;">
+            {% for site in most_visited_sites %}
+            <a href="{{ site.url }}" class="site-tile">
+                <img src="{{ site.favicon }}" alt="{{ site.title }} favicon" width="32">
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}
